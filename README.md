@@ -273,4 +273,4 @@ $ python3 unittest -m tests/test_console.py
 
 ## Authors :black_nib:
 * **Gicheru Murakaru** <[G-MURAKARU](https://github.com/G-MURAKARU)>
-* **Keith Kadima** <[kadimakeith](https://github.com/kadimakeith)>
+* **Keith K. Kadima** <[kadimakeith](https://github.com/kadimakeith)>
