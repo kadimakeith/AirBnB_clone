@@ -3,7 +3,7 @@
 import uuid
 from datetime import datetime
 
-from . import storage
+import models
 
 
 class BaseModel:
@@ -23,7 +23,7 @@ class BaseModel:
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
         if not kwargs:
-            storage.new(self)
+            models.storage.new(self)
 
         else:
             tform = "%Y-%m-%dT%H:%M:%S.%f"
@@ -37,7 +37,7 @@ class BaseModel:
     def save(self):
         """Update updated_at with the current datetime."""
         self.updated_at = datetime.now()
-        storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """Return the dictionary of the BaseModel instance.
