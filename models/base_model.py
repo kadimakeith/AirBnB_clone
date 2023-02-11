@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 """Defines the BaseModel class."""
-import models
-from uuid import uuid4
+import uuid
 from datetime import datetime
+
+import models
 
 
 class BaseModel:
@@ -14,22 +15,28 @@ class BaseModel:
             *args (any): Unused.
             **kwargs (dict): Key/value pairs of attributes.
         """
-        tform = "%Y-%m-%dT%H:%M:%S.%f"
-        self.id = str(uuid4())
-        self.created_at = datetime.today()
-        self.updated_at = datetime.today()
-        if len(kwargs) != 0:
-            for k, v in kwargs.items():
-                if k == "created_at" or k == "updated_at":
-                    self.__dict__[k] = datetime.strptime(v, tform)
-                else:
-                    self.__dict__[k] = v
-        else:
+        self.id = str(
+            uuid.UUID(
+                bytes_le=uuid.uuid4().bytes_le, is_safe=uuid.SafeUUID.safe
+            )
+        )
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        if not kwargs:
             models.storage.new(self)
+
+        else:
+            tform = "%Y-%m-%dT%H:%M:%S.%f"
+            for k, v in kwargs.items():
+                self.__dict__[k] = (
+                    datetime.strptime(v, tform)
+                    if k in ["created_at", "updated_at"]
+                    else v
+                )
 
     def save(self):
         """Update updated_at with the current datetime."""
-        self.updated_at = datetime.today()
+        self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
@@ -41,10 +48,10 @@ class BaseModel:
         rdict["created_at"] = self.created_at.isoformat()
         rdict["updated_at"] = self.updated_at.isoformat()
         rdict["__class__"] = self.__class__.__name__
-        
+
         return rdict
 
     def __str__(self):
         """Return the print/str representation of the BaseModel instance."""
         clname = self.__class__.__name__
-        return "[{}] ({}) {}".format(clname, self.id, self.__dict__)
+        return f"[{clname}] ({self.id}) {self.__dict__}"
